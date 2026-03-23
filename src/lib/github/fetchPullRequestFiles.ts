@@ -12,7 +12,7 @@ export async function fetchPullRequestFiles(
     }
 
     const response = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/files`,
+        `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/files?per_page=100`,
         {
             headers: {
                 Accept: "application/vnd.github+json",
