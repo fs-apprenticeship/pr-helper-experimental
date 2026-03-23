@@ -6,3 +6,10 @@ export interface PullRequestData {
     additions: number
     deletions: number
 }
+
+export interface PullRequestFileData {
+    filename: string
+    additions: number
+    deletions: number
+    status: string
+}
