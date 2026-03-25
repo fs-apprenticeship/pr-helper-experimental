@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import PullRequestSummary from "./PullRequestSummary";
-import { tempData } from "./temp-data";
-import { Repo } from "@/types/repo";
-import { PullRequest } from "@/types/pull-request";
+import PullRequestSummary from "./pr-summary";
+import { tempData } from "../temp-data";
+import { Repo } from "@/features/pull-request/types/repo";
+import { PullRequest } from "@/features/pull-request/types/pull-request";
 
 export default function PullRequestViewer() {
   const labelTextStyle = "font-semibold";

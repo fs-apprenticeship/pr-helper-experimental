@@ -1,5 +1,5 @@
-import { PullRequest } from "@/types/pull-request";
-import { Repo } from "@/types/repo";
+import { PullRequest } from "@/features/pull-request/types/pull-request";
+import { Repo } from "@/features/pull-request/types/repo";
 
 export default function PullRequestSummary({
   repo,

@@ -1,4 +1,4 @@
-import { Repo } from "@/types/repo";
+import { Repo } from "@/features/pull-request/types/repo";
 
 export const tempData: Repo[] = [
   {
