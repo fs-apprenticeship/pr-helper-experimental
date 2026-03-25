@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PR Helper Experimental
+
+This branch adds Prisma-backed PostgreSQL setup to the Next.js app. The application UI is still the default starter, but the project now includes Prisma configuration, an initial schema, and a checked-in migration.
+
+## What's In This Branch
+
+- Prisma 7 configured via `prisma.config.ts`
+- PostgreSQL datasource driven by `DATABASE_URL`
+- Generated Prisma client output at `generated/prisma`
+- Initial `User` model with a UUID primary key
+- Initial migration in `prisma/migrations`
+
+## Prerequisites
+
+- Node.js 20+
+- A PostgreSQL database
+- An environment variable named `DATABASE_URL`
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create a `.env` file and set your database connection string:
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB_NAME?schema=public"
+```
+
+3. Apply the existing migration and generate the Prisma client:
+
+```bash
+npx prisma migrate dev
+```
+
+4. Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Prisma Notes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- The Prisma schema lives in `prisma/schema.prisma`.
+- Prisma reads `DATABASE_URL` from `.env` via `prisma.config.ts`.
+- The generated client is written to `generated/prisma` and is gitignored.
+- The current schema defines a single `User` table:
 
-## Learn More
+```prisma
+model User {
+  id String @id @default(uuid()) @db.Uuid
+}
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Useful Commands
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Apply pending migrations in development
+npx prisma migrate dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Regenerate the Prisma client after schema changes
+npx prisma generate
 
-## Deploy on Vercel
+# Open Prisma Studio
+npx prisma studio
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Start the Next.js app
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Current Scope
+
+This branch sets up the database layer but does not yet wire Prisma into the app runtime. If more database models or application queries are added later, this README should be expanded with those workflows.
