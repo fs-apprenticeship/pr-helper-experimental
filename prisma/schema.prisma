@@ -13,5 +13,98 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid()) @db.Uuid
+  userId         String       @id @default(uuid()) @db.Uuid
+  githubId       String       @default(uuid())
+  githubUsername String       @unique
+  email          String       @unique
+  clerkUserId    String       @unique
+  createdAt      DateTime     @default(now())
+  repositories   Repository[]
+}
+
+model Repository {
+  id           String        @id @default(uuid()) @map("repoId") @db.Uuid
+  githubId     String        @default(uuid())
+  owner        User          @relation(fields: [id], references: [userId])
+  name         String
+  fullName     String
+  url          String
+  createdAt    DateTime      @default(now())
+  pullRequests PullRequest[]
+}
+
+model PullRequest {
+  id          String           @id @default(uuid()) @db.Uuid
+  githubPrId  String           @unique
+  number      Int              @default(autoincrement())
+  title       String
+  description String
+  state       PullRequestState
+  author      String
+  baseBranch  String
+  headBranch  String
+  url         String
+  openedAt    DateTime         @default(now())
+  mergedAt    DateTime?
+  closedAt    DateTime?
+  createdAt   DateTime         @default(now())
+  repository  Repository       @relation(fields: [githubPrId], references: [id])
+  changes     FileDiff[]
+  reviews     Review[]
+}
+
+model FileDiff {
+  id          String         @id @unique @default(uuid()) @db.Uuid
+  filename    String
+  status      FileDiffStatus
+  additions   String[]
+  deletions   String[]
+  patch       String?
+  createdAt   DateTime       @default(now())
+  pullRequest PullRequest    @relation(fields: [id], references: [githubPrId])
+}
+
+model Review {
+  id           String       @id @unique @default(uuid()) @db.Uuid
+  status       ReviewStatus @default(PENDING)
+  filesChanged String[]
+  linesAdded   Int
+  linesRemoved Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime?
+  pullRequest  PullRequest  @relation(fields: [id], references: [id])
+}
+
+model ReviewIssue {
+  id         String              @id @unique @default(uuid()) @db.Uuid
+  severity   ReviewIssueSeverity
+  category   String
+  message    String?
+  suggestion String?
+  filename   String?
+}
+
+enum PullRequestState {
+  OPEN
+  CLOSED
+  MERGED
+}
+
+enum FileDiffStatus {
+  ADDED
+  MODIFIED
+  DELETED
+  RENAMED
+}
+
+enum ReviewStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum ReviewIssueSeverity {
+  INFO
+  WARNING
+  ERROR
 }
