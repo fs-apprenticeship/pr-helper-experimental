@@ -13,9 +13,9 @@ datasource db {
 }
 
 model User {
-  userId         String       @id @default(uuid()) @db.Uuid
-  githubId       String       @default(uuid())
-  githubUsername String       @unique
+  id             String       @id @default(uuid()) @db.Uuid
+  githubId       String       @unique
+  username       String       @unique
   email          String       @unique
   clerkUserId    String       @unique
   createdAt      DateTime     @default(now())
@@ -23,60 +23,67 @@ model User {
 }
 
 model Repository {
-  id           String        @id @default(uuid()) @map("repoId") @db.Uuid
-  githubId     String        @default(uuid())
-  owner        User          @relation(fields: [id], references: [userId])
-  name         String
-  fullName     String
-  url          String
-  createdAt    DateTime      @default(now())
+  id        String   @id @default(uuid()) @db.Uuid
+  githubId  String
+  ownerId   String   @db.Uuid
+  owner     User     @relation(fields: [ownerId], references: [id])
+  name      String
+  fullName  String
+  url       String
+  createdAt DateTime @default(now())
   pullRequests PullRequest[]
 }
 
 model PullRequest {
-  id          String           @id @default(uuid()) @db.Uuid
-  githubPrId  String           @unique
-  number      Int              @default(autoincrement())
+  id          String   @id @default(uuid()) @db.Uuid
+  githubPrId  String   @unique
+  number      Int
   title       String
-  description String
+  description String?
   state       PullRequestState
   author      String
   baseBranch  String
   headBranch  String
   url         String
-  openedAt    DateTime         @default(now())
+  openedAt    DateTime @default(now())
   mergedAt    DateTime?
   closedAt    DateTime?
-  createdAt   DateTime         @default(now())
-  repository  Repository       @relation(fields: [githubPrId], references: [id])
+  createdAt   DateTime @default(now())
+  repositoryId String   @db.Uuid
+  repository   Repository @relation(fields: [repositoryId], references: [id])
   changes     FileDiff[]
   reviews     Review[]
 }
 
 model FileDiff {
-  id          String         @id @unique @default(uuid()) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   filename    String
   status      FileDiffStatus
-  additions   String[]
-  deletions   String[]
+  additions   Int
+  deletions   Int
   patch       String?
-  createdAt   DateTime       @default(now())
-  pullRequest PullRequest    @relation(fields: [id], references: [githubPrId])
+  createdAt   DateTime @default(now())
+  pullRequestId String @db.Uuid
+  pullRequest   PullRequest @relation(fields: [pullRequestId], references: [id])
 }
 
 model Review {
-  id           String       @id @unique @default(uuid()) @db.Uuid
+  id           String       @id @default(uuid()) @db.Uuid
   status       ReviewStatus @default(PENDING)
   filesChanged String[]
-  linesAdded   Int
-  linesRemoved Int
+  linesAdded    Int
+  linesRemoved  Int
   createdAt    DateTime     @default(now())
   updatedAt    DateTime?
-  pullRequest  PullRequest  @relation(fields: [id], references: [id])
+  pullRequestId String      @db.Uuid
+  pullRequest   PullRequest @relation(fields: [pullRequestId], references: [id])
+  issues ReviewIssue[]
 }
 
 model ReviewIssue {
-  id         String              @id @unique @default(uuid()) @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
+  reviewId   String   @db.Uuid
+  review     Review   @relation(fields: [reviewId], references: [id])
   severity   ReviewIssueSeverity
   category   String
   message    String?
