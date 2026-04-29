@@ -42,8 +42,8 @@ export default function PullRequestViewer() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-start justify-center bg-background px-4 pt-36">
-      <div className="animate-in fade-in slide-in-from-bottom-3 w-full max-w-[360px] space-y-3 duration-500 ease-out">
+    <div className="flex min-h-[calc(100vh-4rem)] items-start justify-center bg-background px-4 pt-12 sm:pt-36">
+      <div className="animate-in fade-in slide-in-from-bottom-3 w-full max-w-[360px] space-y-3 pb-12 duration-500 ease-out">
         <Card>
           <CardHeader className="pb-4">
             <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
